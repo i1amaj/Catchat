@@ -1,0 +1,48 @@
+{% extends 'layout.html' %}
+
+{% block title %}
+    Status
+{% endblock %}
+
+{% block body %}
+    <div class="second_div">
+        <div class="title_div">Mood</div>
+        {% for status in all_status %}
+            {% if status.username == session["username"] %}
+                <form action="/mood" method="post">
+                    <div class="user_div">
+                        <input name="friend" value='{{ status.username }}' style="display: none" />
+                        <button class="friend_button" type="submit" id="{{ status.username }}" style="background-color: #b3daff">
+                            <img src="{{ status.status }}" class="friend_profile">
+                            <p class="friend_name"><strong>You</strong></p>
+                        </button>
+                    </div>
+                </form>
+
+            {% else %}
+                <form action="/chat" method="post">
+                    <div class="friend_div">
+                        <input name="friend" value='{{ status.username }}' style="display: none" />
+                        <button class="friend_button" type="submit" id="{{ status.username }}">
+                            <img src="{{ status.status }}" class="friend_profile">
+                            <p class="friend_name">{{ status.username }}</p>
+                        </button>
+                    </div>
+                </form>
+            {% endif %}
+
+        {% endfor %}
+    </div>
+
+    <div class="profile_div">
+        <div class="cat_frame_div">
+            <div class="ears" id="left-ear"></div>
+            <div class="ears" id="right-ear"></div>
+            <div id="user_data">
+                <img src="{{ most_status.status }}" alt="user picture" id="user_data_image">
+                <p id="user_data_name">Mood of the day!</p>
+            </div>
+        </div>
+
+
+{% endblock %}

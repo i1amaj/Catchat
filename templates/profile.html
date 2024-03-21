@@ -1,0 +1,88 @@
+{% extends 'layout.html' %}
+
+{% block title %}
+    Profile
+{% endblock %}
+
+{% block body %}
+    <div class="second_div">
+        <div class="title_div">Profile</div>
+
+    <!-- PROFILE PIC -->
+        <form action="/profilepic" method="post">
+            <button class="profile_buttons" id="profilepic" type="submit">Select profile picture</button>
+        </form>
+        {% if change == 'profilepic' %}
+            <form action="/profilepic" method="post" class="profile_forms">
+                <div class="input_div">
+                    <input class="profile_inputs" id="pic" name="pic" placeholder="Enter URL!" type="url" autocomplete="off" required>
+                    <button type="submit" class="profile_submit_buttons">Done!</button>
+                </div>
+            </form>
+            <script>
+                document.getElementById("profilepic").style.backgroundColor = `#b3daff`;
+            </script>
+        {% endif %}
+
+    <!-- CHANGE PASSWORD -->
+        <form action="/change_password" method="post">
+            <button class="profile_buttons" type="submit" id="change_password">Change password</button>
+        </form>
+
+        {% if change == 'changepassword'%}
+            <form action="/change_password" method="post" class="profile_forms">
+                <input class="profile_inputs" id="password" name="password" placeholder="Ener your current password" type="password" required>
+                <input class="profile_inputs" id="new_password" name="new_password" placeholder="Ener new Password" type="password" required>
+                <input class="profile_inputs" id="new_confirmation" name="new_confirmation" placeholder="Confirm your Password" type="password" required>
+                <button class="profile_submit_buttons" type="submit">Change password</button>
+            </form>
+            {% if error %}
+                <div class="profile_errors">{{ error }}</div>
+            {% endif %}
+
+            <script>
+                document.getElementById("change_password").style.backgroundColor = `#b3daff`;
+            </script>
+        {% endif %}
+
+    <!-- LOGOUT -->
+        <form action="/logout">
+            <button class="profile_buttons" id="logout" type="submit">Logout</button>
+        </form>
+
+    <!-- DELETE ACCOUNT -->
+        <form action="/delete_account" method="post">
+            <button class="profile_buttons" id="delete_button" type="submit">Delete account</button>
+        </form>
+        {% if change == 'deleteaccount'%}
+            <form action="/delete_account" method="post" class="profile_forms">
+                <input class="profile_inputs" id="password" name="password" placeholder="Password" type="password" required>
+                <button class="profile_submit_buttons" type="submit">Delete Account</button>
+                <div id="delete_warning">This action is irretrievable!</div>
+            </form>
+
+            {% if error %}
+                <div class="profile_errors">{{ error }}</div>
+            {% endif %}
+
+            <script>
+                document.getElementById("delete_button").style.backgroundColor = `#b3daff`;
+            </script>
+        {% endif %}
+    </div>
+
+    <div class="profile_div">
+        <div class="cat_frame_div">
+            <div class="ears" id="left-ear"></div>
+            <div class="ears" id="right-ear"></div>
+            <div id="user_data">
+                {% for data in user_data %}
+                    <img src="{{ data.image}}" alt="user picture" id="user_data_image">
+                    <p id="user_data_name">{{ data.username }}'s Profile</p>
+                {% endfor %}
+            </div>
+        </div>
+
+    </div>
+
+{% endblock %}

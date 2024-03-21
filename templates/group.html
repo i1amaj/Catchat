@@ -1,0 +1,156 @@
+{% extends 'layout.html' %}
+
+{% block title %}
+    Group
+{% endblock %}
+
+{% block body %}
+    <div class="second_div">
+        <div class="title_div">Group Chat</div>
+        <form action="/group" method="post">
+            <input type="text" name="group_code" placeholder="Enter group code!" autocomplete="off" id="group_search" />
+            <button name="join" type="submit" class="group_buttons">Join Group</button>
+        </form>
+        <form action="/create_group" method="post">
+            <button name="create" type="submit" class="group_buttons">Create Group</button>
+        </form>
+
+        {% if code %}
+            <div class="group_data">Group code is : {{ code }}</div>
+        {% endif %}
+
+        {% if error %}
+            <div class="group_data">{{ error }}</div>
+        {% endif %}
+
+        <div class="group_codes_div" style="padding: 10px 0px">
+            {% for group in user_groups %}
+            <form action="/group" method="post">
+                <div class="group_div">
+                    <input name="group_code" value='{{ group }}' style="display: none" />
+                    <button class="group_button" type="submit" id="{{ group }}">
+                        <img src="https://i.pinimg.com/564x/55/d2/31/55d23101502a7cb1801a556610d95947.jpg" class="group_profile">
+                        <p class="group_code_name">{{ group }}</p>
+                    </button>
+                </div>
+            </form>
+            {% endfor %}            
+        </div>
+    </div>
+
+
+    {% if room %}
+        <div class="group_top">
+            <img src="https://i.pinimg.com/564x/55/d2/31/55d23101502a7cb1801a556610d95947.jpg" class="profile" id="group_image">
+            <p id="group_top_code">{{ room }}</p>
+        </div>
+        <div id="username" style="display: none">{{ username }}</div>
+
+        <div id="all_messages">
+    <!-- displaying old chats -->
+            {% for chat in chats %}
+                {% if chat.username != username %}
+                    <div class="chatbox">
+                        <div class="profile" style="background-image: url('{{ chat.image }}')"></div>
+                        <p class="chat">
+                            <span class="chat_name">{{ chat.username }}</span><br>
+                            <span class="chat_message">{{ chat.message }}</span><br>
+                            <span class="time">{{ chat.time }}</span>
+                        </p>
+                    </div>
+                {% else %}
+                    <div class="user_chatbox">
+                        <p class="user_chat">
+                            <span class="user_chat_message">{{ chat.message }}</span><br>
+                            <span class="time">{{ chat.time }}</span>
+                        </p>
+                        <div class="user_profile" style="background-image: url('{{ chat.image }}')"></div>
+                    </div>
+                {% endif %}
+            {% endfor %}
+            <div id="messages"></div>
+        </div>
+
+        <div class="message_input_div">
+            <input id="message" type="text" name="message" placeholder="Type message" />
+        </div>
+
+        <script type="text/javascript">
+            var socketio = io();
+
+            const messages = document.getElementById("messages")
+            const message = document.getElementById("message")
+            const user = document.getElementById("username").innerText;
+            const allMessages = document.getElementById("all_messages");
+            const groupCode = document.getElementById("group_top_code").innerText;
+            const allGroups = document.querySelectorAll(".group_code_name")
+
+            allMessages.scrollTop = allMessages.scrollHeight;
+
+            // highlighting the current group
+            allGroups.forEach((group) => {     
+                if (group.innerText == groupCode) {
+                    document.getElementById(`${group.innerText}`).style.backgroundColor = "#b3daff";
+                }
+            })
+
+            scrollBarWidth = () => {
+            // adjusting width when scroll bar is visible
+                if (allMessages.scrollHeight > allMessages.clientHeight) {
+                    allMessages.style.width = `77.3vw`;
+                } else {
+                    allMessages.style.width = `76.1vw`;
+                }
+            }
+
+            allMessages.scrollTop = allMessages.scrollHeight;
+            scrollBarWidth();
+
+            const createMessage = (username, message, time, name, image) => {
+                if (username != user) {
+                    messages.innerHTML += `       <div class="chatbox">
+            <div class="profile" style="background-image: url(${image})"></div>
+            <p class="chat">
+                <span class="chat_name">${username}</span><br>
+                <span class="chat_message">${message}</span><br>
+                <span class="time">${time}</span>
+            </p>
+        </div>`;
+                } else {
+                    messages.innerHTML += `
+                <div class="user_chatbox">
+                    <p class="user_chat">
+                        <span class="user_chat_message">${message}</span><br>
+                        <span class="time">${time}</span>
+                        </p>
+                        <div class="user_profile" style="background-image: url(${image})"></div>
+                    </div>
+
+        `;
+                }
+                allMessages.scrollTop = allMessages.scrollHeight;
+                scrollBarWidth();
+            }
+
+            socketio.on("message", data => {
+                createMessage(data.username, data.message, data.time, data.name, data.image)
+            })
+
+            sendMessage = () => {
+                if (message.value !== "") {
+                    socketio.emit("message", {
+                        data: message.value
+                    })
+                }
+                message.value = ""
+            }
+
+            message.addEventListener("keypress", (event) => {
+                if (event.key === "Enter") {
+                    sendMessage()
+                }
+            })
+        </script>
+    {% endif %}
+
+{% endblock %}

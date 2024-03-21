@@ -1,0 +1,162 @@
+{% extends 'layout.html' %}
+
+{% block title %}
+    Chat
+{% endblock %}
+
+{% block body %}
+
+    <div class="second_div">
+
+        <!-- HTML for friend search input -->
+        <div class="title_div">Chat</div>
+        <form action="/home" method="post" id="search_form">
+            <div class="input_div">
+                <input autocomplete="off" class="search_input" id="friend_search" name="search" placeholder="Search for friends!" type="text" required />
+            </div>
+        </form>
+        
+        <!-- To display friends after search -->
+        {% for friend in friends %}
+            <form action="/chat" method="post">
+                <div class="friend_div">
+                    <input name="friend" value='{{ friend.name }}' style="display: none" />
+                    <button class="friend_button" type="submit" id="{{ friend.name }}">
+                        <img src="{{ friend.image }}" class="friend_profile">
+                        <p class="friend_name">{{ friend.name }}</p>
+                    </button>
+                </div>
+            </form>
+        {% endfor %}
+
+        <!-- To display already existing friends -->
+        {% for already_friend in already_friends %}
+            <form action="/chat" method="post" class="friend_form">
+                <div class="friend_div">
+                    <input name="friend" value='{{ already_friend.name }}' style="display: none" />
+                    <button class="friend_button" type="submit" id="{{ already_friend.name }}">
+                        <img src="{{ already_friend.image }}" class="friend_profile">
+                        <p class="friend_name">{{ already_friend.name }}</p>
+                    </button>
+                </div>
+            </form>
+        {% endfor %}
+    </div>
+
+    <!-- Chat messages part -->
+    {% if friend %}
+        <div id="friend">
+            {% for friend in friend_data %}
+                <img src="{{ friend.image }}" class="profile" id="friend_image">
+                <p class="friend_top_name">{{ friend.username }}</p>
+            {% endfor %}
+        </div>
+        <div id="username" style="display: none">{{ username }}</div>
+
+        <div id="all_messages">
+    <!-- displaying old chats -->
+            {% for chat in chats %}
+                {% if chat.username != username %}
+                    <div class="chatbox">
+                        <div class="profile" style="background-image: url('{{ chat.image }}')"></div>
+                        <p class="chat">
+                            <span class="chat_message">{{ chat.message }}</span><br>
+                            <span class="time">{{ chat.time }}</span>
+                        </p>
+                    </div>
+
+                {% else %}
+                    <div class="user_chatbox">
+                        <p class="user_chat">
+                            <span class="user_chat_message">{{ chat.message }}</span><br>
+                            <span class="time">{{ chat.time }}</span>
+                            <span>{{ chat.mood }}</span>
+                        </p>
+                        <div class="user_profile" style="background-image: url('{{ chat.image }}')"></div>
+                    </div>
+                {% endif %}
+            {% endfor %}
+            <div id="messages"></div>
+        </div>
+
+        <div class="message_input_div">
+            <input id="message" type="text" name="message" placeholder="Type message" />
+        </div>
+
+        <script type="text/javascript">
+            var socketio = io();
+
+            const messages = document.getElementById("messages");
+            const message = document.getElementById("message");
+            const user = document.getElementById("username").innerText;
+            const allMessages = document.getElementById("all_messages");
+            const friend = document.getElementById("friend").innerText;
+            const allFriends = document.querySelectorAll(".friend_name");
+
+            // highlighting the current friend
+            allFriends.forEach((allFriend) => {
+                if (allFriend.innerText == friend) {
+                    document.getElementById(`${allFriend.innerText}`).style.backgroundColor = "#b3daff";
+                }
+            })
+
+            scrollBarWidth = () => {
+            // adjusting width when scroll bar is visible
+                if (allMessages.scrollHeight > allMessages.clientHeight) {
+                    allMessages.style.width = `77.3vw`;
+                } else {
+                    allMessages.style.width = `76.1vw`;
+                }
+            }
+
+            allMessages.scrollTop = allMessages.scrollHeight;
+            scrollBarWidth();
+
+            // creating messages
+            const createMessage = (username, message, time, name, image, mood) => {
+                if (username != user) {
+                    messages.innerHTML += `
+                    <div class="chatbox">
+                <div class="profile" style="background-image: url(${image})"></div>
+                    <p class="chat">
+                        <span class="chat_message">${message}</span><br>
+                        <span class="time">${time}</span>
+                    </p>
+            </div>`;
+                } else {
+                    messages.innerHTML += `
+                    <div class="user_chatbox">
+                        <p class="user_chat">
+                            <span class="user_chat_message">${message}</span><br>
+                            <span class="time">${time}</span>
+                            </p>
+                            <div class="user_profile" style="background-image: url(${image})"></div>
+                        </div>
+
+            `;
+                }
+                allMessages.scrollTop = allMessages.scrollHeight;
+                scrollBarWidth();
+            }
+
+            socketio.on("message", data => {
+                createMessage(data.username, data.message, data.time, data.name, data.image, data.mood)
+            })
+
+            sendMessage = () => {
+                if (message.value !== "") {
+                    socketio.emit("message", {
+                        data: message.value
+                    })
+                }
+                message.value = ""
+            }
+
+            message.addEventListener("keypress", (event) => {
+                if (event.key === "Enter") {
+                    sendMessage()
+                }
+            })
+        </script>
+    {% endif %}
+{% endblock %}

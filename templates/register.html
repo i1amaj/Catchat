@@ -1,0 +1,30 @@
+{% extends 'layout.html' %}
+
+{% block title %}
+    Register
+{% endblock %}
+
+{% block body %}
+    <div class="login_register_div">
+        <div class="ears" id="left-ear-login"></div>
+        <div class="ears" id="right-ear-login"></div>
+        <div class="cat_frame_div">
+            <div class="login_register_inputs_div">
+                <form action="/register" method="post">
+                    <div class="login_register_heading">Register</div>
+                    <input autocomplete="off" autofocus class="login_register_inputs" id="username" name="username" placeholder="Username" type="text" required />
+                    <input class="login_register_inputs" id="password" name="password" placeholder="Password" type="password" required />
+                    <input class="login_register_inputs" id="confirmation" name="confirmation" placeholder="Confirm Password" type="password" required /><br>
+                    <button class="login_register_buttons" id="register_button" type="submit">Register</button>
+                </form>
+
+                {% if error %}
+                    <div class="login_register_errors">{{ error }}</div>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+
+
+
+{% endblock %}

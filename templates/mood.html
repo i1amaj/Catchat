@@ -1,0 +1,58 @@
+{% extends "layout.html" %}
+
+{% block title %}
+    Mood
+{% endblock %}
+
+{% block body %}
+    <div id="moods_div">
+        {% for mood in moods %}
+            <div class="each_mood_div">
+                <p class="moods">{{ mood.mood }}</p>
+                <img src="{{ mood.status}}" class="mood_image" id="{{ mood.mood }}">
+            </div>
+        {% endfor %}
+    </div>
+
+
+
+    <div class="profile_div">
+        <div class="cat_frame_div">
+            <div class="ears" id="left-ear"></div>
+            <div class="ears" id="right-ear"></div>
+            <div id="user_data">
+                {% for mood in user_mood %}
+                    <img src="{{ mood.status }}" id="user_mood">
+                {% endfor %}
+                <form action="/mood" method="post" id="moods_form">
+                    <input type="text" name="mood" style="display: none" id="moods_input">
+                    <input type="text" name="status" style="display: none" id="status_input">
+                    <button type="submit" id="moods_btn">My day today!</button>
+                </form>
+            </div>
+        </div>
+
+        <script>
+            const moodsDiv = document.getElementById("moods_div");
+            const moodsForm = document.getElementById("moods_form");
+            const moodsInput = document.getElementById("moods_input");
+            const userMoodDiv = document.getElementById("user_mood_division");
+            const statusInput = document.getElementById("status_input");
+            const userMood = document.getElementById("user_mood")
+
+            moodsDiv.addEventListener("click", function(event) {
+                if (event.target.tagName == 'DIV') {
+                    moodsInput.value = event.target.querySelector("p").innerText;
+                    const selectedImage = event.target.querySelector("img").src;
+                    statusInput.value = selectedImage;
+                    userMood.src = `${selectedImage}`;
+                } else {
+                    moodsInput.value = event.target.parentNode.querySelector("p").innerText;
+                    const selectedImage = event.target.parentNode.querySelector("img").src;
+                    statusInput.value = selectedImage;
+                    userMood.src = `${selectedImage}`;
+                }
+            })
+        </script>
+
+{% endblock %}
