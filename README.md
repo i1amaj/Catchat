@@ -5,10 +5,10 @@
 Cat Chat is a real-time cat-themed chat web application that consists of several features like individual chats, group chats, mood selectors, etc., with a humorous touch of funny cat memes. A user can also modify his or her profile and delete his or her account. It is programmed by front-end __HTML, CSS, Javascript__ and back-end __flask web sockets, Python, and SQL__.
 
 ### Screenshots:
-<img src="https://github.com/i1amaj/Catchat/assets/146009506/4c3d75b3-5dc1-40fe-bab5-6d570c3410e6" alt="Chat" width="410" height="210" />
-<img src="https://github.com/i1amaj/Catchat/assets/146009506/3fbc4e8c-ed6f-4cd3-9de5-7317581adbdc" alt="Froup" width="410" height="210" />
-<img src="https://github.com/i1amaj/Catchat/assets/146009506/19285afc-c76d-43ca-865f-1ee6930c661e" alt="Status" width="410" height="210" />
-<img src="https://github.com/i1amaj/Catchat/assets/146009506/3961c600-6595-4706-a5ae-97ccb9c5151d" alt="Mood" width="410" height="210" />
+<img src="https://github.com/i1amaj/Catchat/assets/146009506/4c3d75b3-5dc1-40fe-bab5-6d570c3410e6" alt="Chat"/>
+<img src="https://github.com/i1amaj/Catchat/assets/146009506/3fbc4e8c-ed6f-4cd3-9de5-7317581adbdc" alt="Froup"/>
+<img src="https://github.com/i1amaj/Catchat/assets/146009506/19285afc-c76d-43ca-865f-1ee6930c661e" alt="Status" />
+<img src="https://github.com/i1amaj/Catchat/assets/146009506/3961c600-6595-4706-a5ae-97ccb9c5151d" alt="Mood" />
 
 ## Details:
 It consists of the following parts:
